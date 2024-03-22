@@ -1,0 +1,100 @@
+# Python program for Dijkstra's single
+# source shortest path algorithm. The program is
+# for adjacency matrix representation of the graph
+
+# Library for INT_MAX
+import sys
+import numpy as np
+
+class Graph():
+    def __init__(self, wmatrix):
+        self.V = wmatrix.shape[0]
+        self.graph = wmatrix
+
+    def printSolution(self, dist):
+        print("Vertex \tDistance from Source")
+        for node in range(self.V):
+            print(node, "\t", dist[node])
+
+
+    def minDistance(self, dist, sptSet):
+        """
+        # A utility function to find the vertex with
+    # minimum distance value, from the set of vertices
+    # not yet included in shortest path tree
+           # # Initialize minimum distance for next node
+        # min = sys.maxsize
+        #
+        # # Search not nearest vertex not in the
+        # # shortest path tree
+        # for u in range(self.V):
+        #     if dist[u] < min and sptSet[u] == False:
+        #         min = dist[u]
+        #         min_index = u
+        #
+        # return min_index
+
+        :param dist:
+        :param sptSet:
+        :return:
+        """
+        temp_dist = dist
+        nindx = np.where(sptSet==False)[0]
+        temp_dist = temp_dist[nindx]
+        idx = np.argmin(temp_dist)
+        idx_abs = nindx[idx]
+        return idx_abs
+
+
+    # Function that implements Dijkstra's single source
+    # shortest path algorithm for a graph represented
+    # using adjacency matrix representation
+    def dijkstra(self, src):
+
+        dist = np.array([sys.maxsize] * self.V)
+        dist[src] = 0
+        # nodes already visited
+        sptSet = np.array([False] * self.V)
+
+        for cout in range(self.V):
+
+            # Pick the minimum distance vertex from
+            # the set of vertices not yet processed.
+            # x is always equal to src in first iteration
+            x = self.minDistance(dist, sptSet)
+
+            # Put the minimum distance vertex in the
+            # shortest path tree
+            sptSet[x] = True
+
+            # Update dist value of the adjacent vertices
+            # of the picked vertex only if the current
+            # distance is greater than new distance and
+            # the vertex in not in the shortest path tree
+            for y in range(self.V):
+                if self.graph[x][y] > 0 and sptSet[y]==False and \
+                        dist[y] > dist[x] + self.graph[x][y]:
+                    dist[y] = dist[x] + self.graph[x][y]
+
+        self.printSolution(dist)
+
+
+# Driver's code
+if __name__ == "__main__":
+    wmatrix = np.array([[0, 4, 0, 0, 0, 0, 0, 8, 0],
+               [4, 0, 8, 0, 0, 0, 0, 11, 0],
+               [0, 8, 0, 7, 0, 4, 0, 0, 2],
+               [0, 0, 7, 0, 9, 14, 0, 0, 0],
+               [0, 0, 0, 9, 0, 10, 0, 0, 0],
+               [0, 0, 4, 14, 10, 0, 2, 0, 0],
+               [0, 0, 0, 0, 0, 2, 0, 1, 6],
+               [8, 11, 0, 0, 0, 0, 1, 0, 7],
+               [0, 0, 2, 0, 0, 0, 6, 7, 0]
+               ])
+
+    g = Graph(wmatrix=wmatrix)
+
+
+    g.dijkstra(0)
+
+
